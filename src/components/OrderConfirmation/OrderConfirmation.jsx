@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, Typography, Container, Box, Paper } from '@mui/material';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'; // Icono para el mensaje de confirmación
-import conejo from '../../assets/conejo.png';
+import conejo from '../../assets/conejo2.png';
 
 const OrderConfirmation = () => {
   const whatsappMessage = "Hola, acabo de hacer un pedido en Madriguera y me gustaría obtener más información sobre mi orden. ¡Gracias!"
