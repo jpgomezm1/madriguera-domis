@@ -12,7 +12,7 @@ const OrderConfirmation = () => {
     <Container maxWidth="sm">
       <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
         <Paper elevation={3} style={{ textAlign: 'center', padding: '40px', borderRadius: '15px', border: '1px solid #e0e0e0' }}>
-          <img src={conejo} alt="Logo de la Empresa" style={{ maxWidth: '170px', marginBottom: '20px' }} />
+          <img src={conejo} alt="Logo de la Empresa" style={{ maxWidth: '220px', marginBottom: '10px' }} />
           <Typography variant="h4" gutterBottom style={{ color: '#4CAF50' }}>
             <CheckCircleOutlineIcon style={{ verticalAlign: 'middle', fontSize: '1.5em' }} /> Pedido Confirmado
           </Typography>

@@ -22,12 +22,23 @@ function MainPage() {
     products: []
   });
   const [showSummary, setShowSummary] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const products = [
     { id: 1, name: "Crookie Negro", price: 12000, image: negro },
     { id: 2, name: "Crookie Blanco", price: 13000, image: blanco },
     { id: 3, name: "Cajita x 5", price: 25000, image: mini }
   ];
+
+  const validateEmail = (email) => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+  };
+
+  const validatePhoneNumber = (phoneNumber) => {
+    const re = /^\d{10}$/;
+    return re.test(phoneNumber);
+  };
 
   const handleCheckboxChange = (event, product) => {
     if (event.target.checked) {
@@ -54,7 +65,18 @@ function MainPage() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    setShowSummary(true);
+    if (!order.fullName || !order.phoneNumber || !order.address || !order.neighborhood || !order.email || !order.products.length || !validateEmail(order.email) || !validatePhoneNumber(order.phoneNumber)) {
+      setErrors({
+        fullName: !order.fullName ? 'Campo requerido' : '',
+        phoneNumber: !order.phoneNumber ? 'Campo requerido' : !validatePhoneNumber(order.phoneNumber) ? 'Número de teléfono inválido' : '',
+        address: !order.address ? 'Campo requerido' : '',
+        neighborhood: !order.neighborhood ? 'Campo requerido' : '',
+        email: !order.email ? 'Campo requerido' : !validateEmail(order.email) ? 'Correo electrónico inválido' : '',
+        products: order.products.length === 0 ? 'Seleccione al menos un producto' : ''
+      });
+    } else {
+      setShowSummary(true);
+    }
   };
 
   const handleCloseSummary = () => {
@@ -67,16 +89,17 @@ function MainPage() {
         <Header logo={logo} />
         <Grid item xs={12}>
           <form onSubmit={handleSubmit} style={{ width: '100%' }}>
-            <TextField fullWidth label="Nombre completo" name="fullName" value={order.fullName} onChange={(e) => setOrder({ ...order, fullName: e.target.value })} margin="normal" />
-            <TextField fullWidth label="Número de teléfono" name="phoneNumber" value={order.phoneNumber} onChange={(e) => setOrder({ ...order, phoneNumber: e.target.value })} margin="normal" />
-            <TextField fullWidth label="Correo Electrónico" name="email" value={order.phoneNumber} onChange={(e) => setOrder({ ...order, phoneNumber: e.target.value })} margin="normal" />
-            <TextField fullWidth label="Dirección" name="address" type="email" value={order.email} onChange={(e) => setOrder({ ...order, email: e.target.value })} margin="normal" />
+            <TextField fullWidth label="Nombre completo" name="fullName" value={order.fullName} onChange={(e) => setOrder({ ...order, fullName: e.target.value })} margin="normal" error={!!errors.fullName} helperText={errors.fullName} />
+            <TextField fullWidth label="Número de teléfono" name="phoneNumber" value={order.phoneNumber} onChange={(e) => setOrder({ ...order, phoneNumber: e.target.value })} margin="normal" error={!!errors.phoneNumber} helperText={errors.phoneNumber} />
+            <TextField fullWidth label="Correo Electrónico" name="email" value={order.email} onChange={(e) => setOrder({ ...order, email: e.target.value })} margin="normal" error={!!errors.email} helperText={errors.email} />
+            <TextField fullWidth label="Dirección" name="address" value={order.address} onChange={(e) => setOrder({ ...order, address: e.target.value })} margin="normal" error={!!errors.address} helperText={errors.address} />
             <FormControl fullWidth margin="normal">
               <InputLabel>Barrio</InputLabel>
               <Select
                 label="Barrio"
                 value={order.neighborhood}
                 onChange={(e) => setOrder({ ...order, neighborhood: e.target.value })}
+                error={!!errors.neighborhood}
               >
                 {barrios.map((barrio) => (
                   <MenuItem key={barrio} value={barrio}>
@@ -153,3 +176,4 @@ function MainPage() {
 }
 
 export default MainPage;
+

@@ -26,12 +26,18 @@ const OrderSummary = ({ isOpen, order, products, handleClose }) => {
   };
 
   const handleCompleteOrder = () => {
+    // Verificar si el método de pago seleccionado es "Transferencia"
     if (paymentMethod === "Transferencia") {
-      setShowQr(true);
-    } else {
-      if (paymentMethod === 'Efectivo' || paymentProof) {
-        navigate('/confirmation'); // Redirecciona a la ruta de confirmación
+      // Mostrar QR solo si aún no se ha cargado un comprobante de pago
+      if (!paymentProof) {
+        setShowQr(true);
+      } else {
+        // Redireccionar a la página de confirmación si ya se cargó el comprobante
+        navigate('/confirmation');
       }
+    } else if (paymentMethod === 'Efectivo') {
+      // Para pagos en efectivo, redirigir directamente
+      navigate('/confirmation');
     }
   };
 
