@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
-import { TextField, Button, Container, Grid, Checkbox, Typography, Card, CardMedia, CardContent, IconButton, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import { TextField, Button, Container, Grid, Checkbox, Typography, Card, CardMedia, CardContent, IconButton, FormControl, InputLabel, Select, MenuItem, FormControlLabel, Link } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import OrderSummary from '../OrderSummary/OrderSummary';
-import Header from '../Header/Header'
+import Header from '../Header/Header';
 
 import logo from '../../assets/madriguera.jpeg';
 import negro from '../../assets/crookienegro.webp';
 import blanco from '../../assets/crookieblanco.webp';
 import mini from '../../assets/cajita.webp';
-
-const barrios = ["Poblado", "Envigado", "Laureles - Estadio", "Bello", "Itagui", "Sabaneta", "Industriales", "Loma de los Bernal", "Guayabal", "La America", "Belen", "Robledo", "Castilla", "Calasanz", "Alpujarra", "La Candelaria"];
+import { barrios, deliveryCosts } from '../../data/barrios';
 
 function MainPage() {
   const [order, setOrder] = useState({
@@ -21,8 +20,17 @@ function MainPage() {
     email: '',
     products: []
   });
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
   const [errors, setErrors] = useState({});
+  const [deliveryCost, setDeliveryCost] = useState(0);
+
+  const handleNeighborhoodChange = (event) => {
+    const selectedNeighborhood = event.target.value;
+    setOrder({ ...order, neighborhood: selectedNeighborhood });
+    setDeliveryCost(deliveryCosts[selectedNeighborhood] || 0);
+  };
 
   const products = [
     { id: 1, name: "Crookie Negro", price: 12000, image: negro },
@@ -65,15 +73,18 @@ function MainPage() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    if (!order.fullName || !order.phoneNumber || !order.address || !order.neighborhood || !order.email || !order.products.length || !validateEmail(order.email) || !validatePhoneNumber(order.phoneNumber)) {
+    if (!order.fullName || !order.phoneNumber || !order.address || !order.neighborhood || !order.email || !order.products.length || !validateEmail(order.email) || !validatePhoneNumber(order.phoneNumber) || !termsAccepted || !privacyAccepted) {
       setErrors({
         fullName: !order.fullName ? 'Campo requerido' : '',
         phoneNumber: !order.phoneNumber ? 'Campo requerido' : !validatePhoneNumber(order.phoneNumber) ? 'Número de teléfono inválido' : '',
         address: !order.address ? 'Campo requerido' : '',
         neighborhood: !order.neighborhood ? 'Campo requerido' : '',
         email: !order.email ? 'Campo requerido' : !validateEmail(order.email) ? 'Correo electrónico inválido' : '',
-        products: order.products.length === 0 ? 'Seleccione al menos un producto' : ''
+        products: order.products.length === 0 ? 'Seleccione al menos un producto' : '',
+        terms: !termsAccepted ? 'Debe aceptar los términos y condiciones' : '',
+        privacy: !privacyAccepted ? 'Debe aceptar la política de privacidad' : ''
       });
+      return; // Ensure no further processing if validation fails
     } else {
       setShowSummary(true);
     }
@@ -98,7 +109,7 @@ function MainPage() {
               <Select
                 label="Barrio"
                 value={order.neighborhood}
-                onChange={(e) => setOrder({ ...order, neighborhood: e.target.value })}
+                onChange={handleNeighborhoodChange}
                 error={!!errors.neighborhood}
               >
                 {barrios.map((barrio) => (
@@ -154,6 +165,14 @@ function MainPage() {
                 </Grid>
               ))}
             </Grid>
+            <FormControlLabel
+              control={<Checkbox checked={termsAccepted} onChange={() => setTermsAccepted(!termsAccepted)} />}
+              label={<Typography variant="body2">Acepto los <Link href="/terms" target="_blank" rel="noopener">Términos y Condiciones</Link></Typography>}
+            />
+            <FormControlLabel
+              control={<Checkbox checked={privacyAccepted} onChange={() => setPrivacyAccepted(!privacyAccepted)} />}
+              label={<Typography variant="body2">Acepto la <Link href="/privacy" target="_blank" rel="noopener">Política de Privacidad</Link></Typography>}
+            />
             <Button
               type="submit"
               variant="contained"
@@ -170,7 +189,7 @@ function MainPage() {
           </form>
         </Grid>
       </Grid>
-      <OrderSummary isOpen={showSummary} order={order} products={products} handleClose={handleCloseSummary} />
+      <OrderSummary isOpen={showSummary} order={order} products={products} handleClose={handleCloseSummary} deliveryCost={deliveryCost} />
     </Container>
   );
 }

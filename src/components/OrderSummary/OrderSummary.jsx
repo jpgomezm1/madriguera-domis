@@ -3,9 +3,8 @@ import { Drawer, List, ListItem, ListItemText, Button, Typography, Divider, Menu
 import { useNavigate } from 'react-router-dom'; // Importar useNavigate correctamente
 import QR from '../../assets/QR2.jpg';
 
-const OrderSummary = ({ isOpen, order, products, handleClose }) => {
+const OrderSummary = ({ isOpen, order, products, handleClose, deliveryCost }) => {
   const navigate = useNavigate();  // Hook para la navegación
-  const deliveryCost = 12000;
   const [paymentMethod, setPaymentMethod] = useState('');
   const [showQr, setShowQr] = useState(false);
   const [paymentProof, setPaymentProof] = useState(null);
