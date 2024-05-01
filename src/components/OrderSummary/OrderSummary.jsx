@@ -45,20 +45,20 @@ const OrderSummary = ({ isOpen, order, products, handleClose, deliveryCost }) =>
       formData.append('comprobante', paymentProof);
     }
   
-    axios.post(`${process.env.REACT_APP_API_URL}/pedido`, formData, {
+    axios.post('https://domicilios-madriguera-ac104c9fedbe.herokuapp.com/pedido', formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
     })
     .then(response => {
       console.log('Pedido guardado:', response.data);
-      navigate('/confirmation');
+      navigate('/confirmation'); // Navegar a la página de confirmación
     })
     .catch(error => {
       console.error('Error al guardar el pedido:', error);
     })
     .finally(() => {
-      setIsLoading(false);
+      setIsLoading(false); // Ocultar el loader
     });
   };
 
