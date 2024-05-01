@@ -5,10 +5,11 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import OrderSummary from '../OrderSummary/OrderSummary';
 import Header from '../Header/Header';
 
+
 import logo from '../../assets/madriguera.jpeg';
-import negro from '../../assets/crookienegro.webp';
-import blanco from '../../assets/crookieblanco.webp';
-import mini from '../../assets/cajita.webp';
+import negro from '../../assets/crookie-negro.jpg';
+import blanco from '../../assets/crookie-blanco.jpg';
+import mini from '../../assets/cajita2.jpg';
 import { barrios, deliveryCosts } from '../../data/barrios';
 
 function MainPage() {
@@ -84,8 +85,9 @@ function MainPage() {
         terms: !termsAccepted ? 'Debe aceptar los términos y condiciones' : '',
         privacy: !privacyAccepted ? 'Debe aceptar la política de privacidad' : ''
       });
-      return; // Ensure no further processing if validation fails
     } else {
+      setErrors({});
+      // Si no hay errores, mostrar el resumen del pedido
       setShowSummary(true);
     }
   };
@@ -100,7 +102,7 @@ function MainPage() {
         <Header logo={logo} />
         <Grid item xs={12}>
           <form onSubmit={handleSubmit} style={{ width: '100%' }}>
-            <TextField fullWidth label="Nombre completo" name="fullName" value={order.fullName} onChange={(e) => setOrder({ ...order, fullName: e.target.value })} margin="normal" error={!!errors.fullName} helperText={errors.fullName} />
+            <TextField fullWidth label="Nombre completo y Apellido" name="fullName" value={order.fullName} onChange={(e) => setOrder({ ...order, fullName: e.target.value })} margin="normal" error={!!errors.fullName} helperText={errors.fullName} />
             <TextField fullWidth label="Número de teléfono" name="phoneNumber" value={order.phoneNumber} onChange={(e) => setOrder({ ...order, phoneNumber: e.target.value })} margin="normal" error={!!errors.phoneNumber} helperText={errors.phoneNumber} />
             <TextField fullWidth label="Correo Electrónico" name="email" value={order.email} onChange={(e) => setOrder({ ...order, email: e.target.value })} margin="normal" error={!!errors.email} helperText={errors.email} />
             <TextField fullWidth label="Dirección" name="address" value={order.address} onChange={(e) => setOrder({ ...order, address: e.target.value })} margin="normal" error={!!errors.address} helperText={errors.address} />
@@ -133,7 +135,7 @@ function MainPage() {
                           <Typography variant="subtitle1">{product.name}</Typography>
                           <Typography variant="body2" color="textSecondary">{product.price.toLocaleString('es-CO', { style: 'currency', currency: 'COP' })}</Typography>
                           {order.products.find(p => p.id === product.id) &&
-                            <div style={{ display: 'flex', alignItems: 'center', marginTop: '7px'}}>
+                            <div style={{ display: 'flex', alignItems: 'center', marginTop: '7px' }}>
                               <IconButton onClick={() => handleQuantityChange(product.id, order.products.find(p => p.id === product.id).quantity - 1)} disabled={order.products.find(p => p.id === product.id).quantity <= 1}>
                                 <RemoveIcon />
                               </IconButton>
@@ -187,6 +189,12 @@ function MainPage() {
               Ordenar
             </Button>
           </form>
+
+          <Typography variant="body2" style={{ marginTop: '10px', textAlign: 'center',  marginBottom: '10px', fontWeight: 'bold' }}>
+            Punto de venta en Laureles
+            <br />
+            Dirección: Circular 75 #39B - 56
+          </Typography>
         </Grid>
       </Grid>
       <OrderSummary isOpen={showSummary} order={order} products={products} handleClose={handleCloseSummary} deliveryCost={deliveryCost} />
@@ -195,4 +203,5 @@ function MainPage() {
 }
 
 export default MainPage;
+
 

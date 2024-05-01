@@ -1,12 +1,14 @@
 import React, { useState, useRef } from 'react';
-import { Drawer, List, ListItem, ListItemText, Button, Typography, Divider, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
+import { Drawer, List, ListItem, ListItemText, Button, Typography, Divider, MenuItem, Select, FormControl, InputLabel, CircularProgress } from '@mui/material';
 import { useNavigate } from 'react-router-dom'; // Importar useNavigate correctamente
 import QR from '../../assets/QR2.jpg';
+import axios from 'axios';
 
 const OrderSummary = ({ isOpen, order, products, handleClose, deliveryCost }) => {
   const navigate = useNavigate();  // Hook para la navegación
   const [paymentMethod, setPaymentMethod] = useState('');
   const [showQr, setShowQr] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [paymentProof, setPaymentProof] = useState(null);
   const fileInputRef = useRef(null);
 
@@ -25,19 +27,39 @@ const OrderSummary = ({ isOpen, order, products, handleClose, deliveryCost }) =>
   };
 
   const handleCompleteOrder = () => {
-    // Verificar si el método de pago seleccionado es "Transferencia"
-    if (paymentMethod === "Transferencia") {
-      // Mostrar QR solo si aún no se ha cargado un comprobante de pago
-      if (!paymentProof) {
-        setShowQr(true);
-      } else {
-        // Redireccionar a la página de confirmación si ya se cargó el comprobante
-        navigate('/confirmation');
-      }
-    } else if (paymentMethod === 'Efectivo') {
-      // Para pagos en efectivo, redirigir directamente
-      navigate('/confirmation');
+    if (paymentMethod === 'Transferencia' && !paymentProof) {
+      setShowQr(true);
+      return; // Detiene la ejecución si no se ha cargado el comprobante
     }
+  
+    setIsLoading(true); // Comenzar a mostrar el loader
+    const formData = new FormData();
+    formData.append('nombre_completo', order.fullName);
+    formData.append('numero_telefono', order.phoneNumber);
+    formData.append('correo_electronico', order.email);
+    formData.append('direccion', order.address);
+    formData.append('barrio', order.neighborhood);
+    formData.append('productos', JSON.stringify(order.products));
+    formData.append('metodo_pago', paymentMethod);
+    if (paymentProof) {
+      formData.append('comprobante', paymentProof);
+    }
+  
+    axios.post(`${process.env.REACT_APP_API_URL}/pedido`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+    .then(response => {
+      console.log('Pedido guardado:', response.data);
+      navigate('/confirmation');
+    })
+    .catch(error => {
+      console.error('Error al guardar el pedido:', error);
+    })
+    .finally(() => {
+      setIsLoading(false);
+    });
   };
 
   const handleFileUpload = (event) => {
@@ -129,8 +151,8 @@ const OrderSummary = ({ isOpen, order, products, handleClose, deliveryCost }) =>
           </div>
         )}
         <Divider />
-        <Button variant="contained" color={buttonColor} fullWidth style={{ marginTop: '20px' }} onClick={handleCompleteOrder}>
-          {buttonLabel}
+        <Button variant="contained" color={buttonColor} fullWidth style={{ marginTop: '20px' }} onClick={handleCompleteOrder} disabled={isLoading}>
+          {isLoading ? <CircularProgress size={24} /> : buttonLabel}
         </Button>
         <Button variant="contained" color="secondary" fullWidth onClick={handleClose} style={{ marginTop: '10px' }}>
           Continuar comprando

@@ -17,7 +17,7 @@ const OrderConfirmation = () => {
             <CheckCircleOutlineIcon style={{ verticalAlign: 'middle', fontSize: '1.5em' }} /> Pedido Confirmado
           </Typography>
           <Typography variant="subtitle1" style={{ margin: '20px 0' }}>
-            ¡Gracias por tu pedido! Tu confirmación ha sido enviada a tu correo electrónico.
+            ¡Gracias por tu pedido! Tu confirmación ha sido enviada por Whatsapp.
           </Typography>
           <Button
             variant="contained"
