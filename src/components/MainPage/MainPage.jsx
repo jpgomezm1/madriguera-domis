@@ -7,9 +7,9 @@ import Header from '../Header/Header';
 
 
 import logo from '../../assets/madriguera.jpeg';
-import negro from '../../assets/crookie-negro.jpg';
-import blanco from '../../assets/crookie-blanco.jpg';
-import mini from '../../assets/cajita2.jpg';
+import negro from '../../assets/negro.jpg';
+import blanco from '../../assets/blanco.jpg';
+import mini from '../../assets/caja.jpg';
 import { barrios, deliveryCosts } from '../../data/barrios';
 
 function MainPage() {
